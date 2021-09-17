@@ -1,7 +1,7 @@
 # Личный проект «TaskForce»
 
 * Студент: [Mansur Taktashev](https://up.htmlacademy.ru/yii/2/user/1630817).
-* Наставник: `Неизвестно`.
+* Наставник: Олег Мифле.
 
 ---
 
