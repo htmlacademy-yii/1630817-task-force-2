@@ -1,10 +1,10 @@
 <?php
-require_once 'Classes\Task\TaskInteface.php';
+require_once 'Maps/TaskData.php';
 
-class Task implements TaskInterface
+class Task
 {
     const STATUS_NEW = 'Новое задание';
-    const STATUS_CANСELED = 'Задание отмененно';
+    const STATUS_CANCELED = 'Задание отмененно';
     const STATUS_IN_WORK = 'В работе';
     const STATUS_DONE = 'Выполнено';
     const STATUS_FAILED = 'Провалено';
@@ -13,7 +13,6 @@ class Task implements TaskInterface
     public $authorID;
     public $description;
     public $taskPerformerId;
-    public $availableMethods;
 
     public function __construct($authorID, $description)
     {
@@ -21,48 +20,48 @@ class Task implements TaskInterface
         $this->description = $description;
     }
 
-    public function respondToTheTask(){
-        $this->availableMethods = ['finishTheTask', 'refuseFromTask'];
-        $this->status = self::STATUS_IN_WORK;
-    }
-
-    public function finishTheTask(){
-        $this->availableMethods = [];
-        $this->status = self::STATUS_DONE;
-    }
-
-    public function refuseFromTask(){
-        $this->availableMethods = [];
-        $this->status = self::STATUS_FAILED;
-    }
-
-    public function cancelTask(){
-        $this->availableMethods = [];
-        $this->status = self::STATUS_CANСELED;
-    }
-
-    public function startTask(){
-        $this->availableMethods = ['cancelTask', 'respondToTask'];
-        $this->status = self::STATUS_NEW;
-    }
-
     public function getNextStatus($actionName)
     {
-        $this->$actionName();
+        if ($actionName === 'startTask') {
+            return self::STATUS_NEW;
+        } elseif ($actionName === 'finishTheTask') {
+            return self::STATUS_DONE;
+        } elseif ($actionName === 'refuseFromTask') {
+            return self::STATUS_FAILED;
+        } elseif ($actionName === 'cancelTask') {
+            return self::STATUS_CANCELED;
+        } elseif ($actionName === 'respondToTheTask') {
+            return self::STATUS_IN_WORK;
+        }
         return $this->status;
     }
 
-    public function setStatus($statusName)
+    public function getAvailableActions($statusName)
     {
-        return $this->status = $statusName;
+        if ($statusName === 'STATUS_NEW') {
+            return ['cancelTask', 'respondToTask'];
+        } elseif ($statusName === 'STATUS_CANСELED') {
+            return false;
+        } elseif ($statusName === 'STATUS_IN_WORK') {
+            return ['finishTheTask', 'refuseFromTask'];
+        } elseif ($statusName === 'STATUS_DONE') {
+            return false;
+        } elseif ($statusName === 'STATUS_FAILED') {
+            return false;
+        }
     }
 
-    public function getAvailableActions()
+    public function getStatusesMap()
     {
-        return $this->availableMethods;
+        global $statuses;
+        return $statuses;
     }
 
-
+    public function getActionsMap()
+    {
+        global $actions;
+        return $actions;
+    }
 
 
 }
