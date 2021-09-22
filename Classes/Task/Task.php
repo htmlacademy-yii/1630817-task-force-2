@@ -1,66 +1,89 @@
 <?php
-require_once 'Maps/TaskData.php';
 
 class Task
 {
-    const STATUS_NEW = 'Новое задание';
-    const STATUS_CANCELED = 'Задание отмененно';
-    const STATUS_IN_WORK = 'В работе';
-    const STATUS_DONE = 'Выполнено';
-    const STATUS_FAILED = 'Провалено';
+    const STATUS_NEW = 'new';
+    const STATUS_CANCELED = 'cancel';
+    const STATUS_IN_WORK = 'in_work';
+    const STATUS_DONE = 'done';
+    const STATUS_FAILED = 'failed';
+
+
+    const RESPOND_TO_THE_TASK = 'respondToTheTask';
+    const FINISH_THE_TASK = 'finishTheTask';
+    const REFUSE_FROM_TASK = 'refuseFromTask';
+    const CANCEL_TASK = 'cancelTask';
+    const START_TASK = 'startTask';
 
     public $status;
     public $authorID;
     public $description;
     public $taskPerformerId;
+    public static $statuses = [
+        'STATUS_NEW'      => 'Новое задание',
+        'STATUS_CANCELED' => 'Задание отмененно',
+        'STATUS_IN_WORK'  => 'В работе',
+        'STATUS_DONE'     => 'Выполнено',
+        'STATUS_FAILED'   => 'Провалено',
+    ];
 
-    public function __construct($authorID, $description)
+    public static $actions = [
+        'respondToTheTask' => 'Откликнуться на задание',
+        'finishTheTask' => 'Закончить задание',
+        'refuseFromTask' => 'Отказаться от задания',
+        'cancelTask' => 'Отменить задание',
+        'startTask' => 'Начать выполнение',
+    ];
+
+
+    public function __construct(int $authorID, string $description)
     {
         $this->authorID = $authorID;
         $this->description = $description;
     }
 
-    public function getNextStatus($actionName)
+    public function getNextStatus(string $actionName)
     {
-        if ($actionName === 'startTask') {
-            return self::STATUS_NEW;
-        } elseif ($actionName === 'finishTheTask') {
-            return self::STATUS_DONE;
-        } elseif ($actionName === 'refuseFromTask') {
-            return self::STATUS_FAILED;
-        } elseif ($actionName === 'cancelTask') {
-            return self::STATUS_CANCELED;
-        } elseif ($actionName === 'respondToTheTask') {
-            return self::STATUS_IN_WORK;
+        switch ($actionName) {
+            case self::START_TASK:
+                return self::STATUS_NEW;
+            case self::FINISH_THE_TASK:
+                return self::STATUS_DONE;
+            case self::REFUSE_FROM_TASK:
+                return self::STATUS_FAILED;
+            case self::CANCEL_TASK:
+                return self::STATUS_CANCELED;
+            case self::RESPOND_TO_THE_TASK:
+                return self::STATUS_IN_WORK;
         }
-        return $this->status;
+
     }
 
-    public function getAvailableActions($statusName)
+
+
+    public function getAvailableActions(string $statusName)
     {
-        if ($statusName === 'STATUS_NEW') {
-            return ['cancelTask', 'respondToTask'];
-        } elseif ($statusName === 'STATUS_CANСELED') {
-            return false;
-        } elseif ($statusName === 'STATUS_IN_WORK') {
-            return ['finishTheTask', 'refuseFromTask'];
-        } elseif ($statusName === 'STATUS_DONE') {
-            return false;
-        } elseif ($statusName === 'STATUS_FAILED') {
-            return false;
+
+        switch ($statusName) {
+            case self::STATUS_NEW:
+                return [self::CANCEL_TASK, self::RESPOND_TO_THE_TASK];
+            case self::STATUS_IN_WORK:
+                return [self::FINISH_THE_TASK, self::REFUSE_FROM_TASK];
+            case self::STATUS_DONE:
+            case self::STATUS_FAILED:
+            case self::STATUS_CANCELED:
+                return [];
         }
     }
 
-    public function getStatusesMap()
+    public function getStatusesMap(): array
     {
-        global $statuses;
-        return $statuses;
+        return self::$statuses;
     }
 
-    public function getActionsMap()
+    public function getActionsMap(): array
     {
-        global $actions;
-        return $actions;
+        return self::$actions;
     }
 
 
