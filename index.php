@@ -1,5 +1,6 @@
 <?php
-require_once 'Classes\Task\Task.php';
+require_once 'vendor/autoload.php';
 
-$newTask = new Task(1,'test');
+$newTask = new myorg\Task\Task(1,'test');
 assert($newTask->getNextStatus('respondToTheTask') == Task::STATUS_IN_WORK, 'respond To The Task');
+
