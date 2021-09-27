@@ -1,0 +1,15 @@
+{
+    "name": "mansur/1630817-task-force-2",
+    "autoload": {
+        "psr-4": {
+            "myorg\\": "Classes/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Taktashev Mansur",
+            "email": "taktashev.m@gmail.com"
+        }
+    ],
+    "require": {}
+}

@@ -1,4 +1,5 @@
 <?php
+namespace myorg\Task;
 
 class Task
 {
