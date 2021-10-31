@@ -5,33 +5,53 @@ CREATE DATABASE TaskForce
 USE TaskForce;
 
 
-CREATE TABLE users
+CREATE TABLE user
 (
     id                        INT AUTO_INCREMENT PRIMARY KEY,
-    registration_date         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     email                     VARCHAR(128) NOT NULL UNIQUE,
-    login                     VARCHAR(128) UNIQUE,
+    login                     VARCHAR(128) NOT NULL UNIQUE,
     password                  CHAR(64) NOT NULL,
     avatar                    VARCHAR(255),
-    user_role                 VARCHAR(255),
-    rating                    float,
-    count_of_completed_tasks  int
+    created_at                TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at                TIMESTAMP 
 );
 
-CREATE TABLE statuses
+CREATE TABLE user_rating
+(
+    id                      INT AUTO_INCREMENT PRIMARY KEY,
+    rating                  float,
+    user_id                 INT,
+    FOREIGN KEY (user_id) REFERENCES user (id)
+
+);
+
+
+CREATE TABLE user_role
+(
+    id                      INT AUTO_INCREMENT PRIMARY KEY,
+    role                    VARCHAR(255),
+    user_id                 INT,
+    FOREIGN KEY (user_id) REFERENCES user (id)
+
+);
+
+
+CREATE TABLE status
+(
+    id           INT AUTO_INCREMENT PRIMARY KEY,
+    name         VARCHAR(128),
+    code         VARCHAR(128)
+
+);
+
+
+CREATE TABLE category
 (
     id           INT AUTO_INCREMENT PRIMARY KEY,
     name         VARCHAR(128)
 );
 
-
-CREATE TABLE categories
-(
-    id           INT AUTO_INCREMENT PRIMARY KEY,
-    name         VARCHAR(128)
-);
-
-CREATE TABLE addresses
+CREATE TABLE address
 (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     city        VARCHAR(255),
@@ -41,7 +61,7 @@ CREATE TABLE addresses
     latitude    float
 );
 
-CREATE TABLE tasks
+CREATE TABLE task
 (
     id              INT AUTO_INCREMENT PRIMARY KEY,
     title           VARCHAR(128),
@@ -49,43 +69,54 @@ CREATE TABLE tasks
     category_id     INT,
     author_id       INT,
     status_id       INT,
-    link            VARCHAR(255),
     payment         float,
     file            VARCHAR(255),
-    creation_date   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    finish_date     TIMESTAMP,
+    end_date        TIMESTAMP,
     location_id     INT,
-    FOREIGN KEY (author_id) REFERENCES users (id),
-    FOREIGN KEY (status_id) REFERENCES statuses (id),
-    FOREIGN KEY (category_id) REFERENCES categories(id),
-    FOREIGN KEY (location_id) REFERENCES addresses(id)
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP,
+    FOREIGN KEY (author_id) REFERENCES user (id),
+    FOREIGN KEY (status_id) REFERENCES status (id),
+    FOREIGN KEY (category_id) REFERENCES category(id),
+    FOREIGN KEY (location_id) REFERENCES address(id)
 );
 
 
-CREATE TABLE tasks_responses
+CREATE TABLE task_response
 (
     id              INT AUTO_INCREMENT PRIMARY KEY,
-    candidate       INT,
+    candidate_id    INT,
     approved        TINYINT(1),
     task_id         INT,
-    FOREIGN KEY (task_id) REFERENCES tasks (id),
-    FOREIGN KEY (candidate) REFERENCES users (id)
+    FOREIGN KEY (task_id) REFERENCES task (id),
+    FOREIGN KEY (candidate_id) REFERENCES user (id)
 );
 
-CREATE TABLE user_addresses
+CREATE TABLE user_address
 (
     id             INT AUTO_INCREMENT PRIMARY KEY,
     address_id     INT,
-    users_id       INT,
-    FOREIGN KEY (users_id) REFERENCES users (id),
-    FOREIGN KEY (address_id) REFERENCES addresses (id)
+    user_id       INT,
+    FOREIGN KEY (user_id) REFERENCES user (id),
+    FOREIGN KEY (address_id) REFERENCES address (id)
+);
+
+CREATE TABLE review
+(
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    description    TEXT,
+    customer_id    INT,
+    performer_id   INT,
+    FOREIGN KEY (customer_id) REFERENCES user (id),
+    FOREIGN KEY (performer_id) REFERENCES user (id)
 );
 
 
-CREATE INDEX u_mail ON users (email);
-CREATE INDEX u_login ON users (login);
-CREATE INDEX task_title ON tasks (title);
-CREATE INDEX task_author ON tasks (title);
-CREATE INDEX task_id ON tasks_responses (task_id);
-CREATE INDEX user_id ON user_addresses (users_id);
-CREATE FULLTEXT INDEX task_search ON tasks (title, description);
+
+CREATE INDEX u_mail ON user (email);
+CREATE INDEX u_login ON user (login);
+CREATE INDEX task_title ON task (title);
+CREATE INDEX task_author ON task (title);
+CREATE INDEX task_id ON task_response (task_id);
+CREATE INDEX user_id ON user_address (user_id);
+CREATE FULLTEXT INDEX task_search ON task (title, description);
