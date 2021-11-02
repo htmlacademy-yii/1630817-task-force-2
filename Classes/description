@@ -9,11 +9,11 @@
 		g)Отказаться от задания($applicant)
 		h)Начать выполнение()
 	2. Свойтсва:
-		public	$title;
-		public  $descriotion;
-		public	$authorId;
-		public  $categoryId;
-		public  $taskPerformerId;
+		private	$title;
+		private $descriotion;
+		private	$authorId;
+		private $categoryId;
+		private $taskPerformerId;
  
  
 Класс статусов(переходы)
@@ -30,7 +30,7 @@
 		а)Получить информацию по юзеру()
 		b)Обновление полей() //имя, email ....
 	2. Cвойства:
-		public	$userId;
+		private	$userId;
 
 	
 Класс адресов (валидация, работа с координатами)

@@ -16,22 +16,22 @@ CREATE TABLE user
     updated_at                TIMESTAMP 
 );
 
-CREATE TABLE user_rating
+
+CREATE TABLE role
 (
     id                      INT AUTO_INCREMENT PRIMARY KEY,
-    rating                  float,
-    user_id                 INT,
-    FOREIGN KEY (user_id) REFERENCES user (id)
-
+    name                    VARCHAR(255)
 );
 
 
 CREATE TABLE user_role
 (
     id                      INT AUTO_INCREMENT PRIMARY KEY,
-    role                    VARCHAR(255),
+    role_id                 INT,
     user_id                 INT,
-    FOREIGN KEY (user_id) REFERENCES user (id)
+    created_at              TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user (id),
+    FOREIGN KEY (role_id) REFERENCES role (id)
 
 );
 
@@ -86,7 +86,7 @@ CREATE TABLE task_response
 (
     id              INT AUTO_INCREMENT PRIMARY KEY,
     candidate_id    INT,
-    approved        TINYINT(1),
+    approved        TINYINT,
     task_id         INT,
     FOREIGN KEY (task_id) REFERENCES task (id),
     FOREIGN KEY (candidate_id) REFERENCES user (id)
@@ -105,10 +105,10 @@ CREATE TABLE review
 (
     id             INT AUTO_INCREMENT PRIMARY KEY,
     description    TEXT,
-    customer_id    INT,
-    performer_id   INT,
-    FOREIGN KEY (customer_id) REFERENCES user (id),
-    FOREIGN KEY (performer_id) REFERENCES user (id)
+    task_id        INT,
+    raiting        FLOAT,
+    FOREIGN KEY (task_id) REFERENCES task (id)
+
 );
 
 
