@@ -19,6 +19,7 @@ class Task
     public $status;
     public $authorID;
     public $description;
+    public $currentUserId;
     public $taskPerformerId;
     public static $statuses = [
         'STATUS_NEW'      => 'Новое задание',
@@ -67,9 +68,17 @@ class Task
 
         switch ($statusName) {
             case self::STATUS_NEW:
-                return [self::CANCEL_TASK, self::RESPOND_TO_THE_TASK];
+                $isCancelAvailable = (new CancelTask)->checkRights($this->authorID,$this->taskPerformerId, $this->currentUserId);
+                $isRespondAvailable = (new RespondToTheTask)->checkRights($this->authorID,$this->taskPerformerId, $this->currentUserId);
+
+                return [$isCancelAvailable ? new CancelTask : 'cancel is not available',  $isRespondAvailable ? new RespondToTheTask :'respond is not available'];
+
             case self::STATUS_IN_WORK:
-                return [self::FINISH_THE_TASK, self::REFUSE_FROM_TASK];
+                $isFinishAvailable = (new FinishTask)->checkRights($this->authorID,$this->taskPerformerId, $this->currentUserId);
+                $isRefuseAvailable = (new RefuseFromTask)->checkRights($this->authorID,$this->taskPerformerId, $this->currentUserId);
+
+                return [$isFinishAvailable ? new FinishTask : 'Finish is not available',  $isRefuseAvailable ? new RefuseFromTask :'refuse is not available'];
+
             case self::STATUS_DONE:
             case self::STATUS_FAILED:
             case self::STATUS_CANCELED:
