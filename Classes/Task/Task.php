@@ -1,6 +1,9 @@
 <?php
 namespace myorg\Task;
 
+use http\Exception;
+use myorg\Exceptions\WrongStatusException;
+
 class Task
 {
     const STATUS_NEW = 'new';
@@ -22,11 +25,11 @@ class Task
     public $currentUserId;
     public $taskPerformerId;
     public static $statuses = [
-        'STATUS_NEW'      => 'Новое задание',
-        'STATUS_CANCELED' => 'Задание отмененно',
-        'STATUS_IN_WORK'  => 'В работе',
-        'STATUS_DONE'     => 'Выполнено',
-        'STATUS_FAILED'   => 'Провалено',
+        'STATUS_NEW'      => 'new',
+        'STATUS_CANCELED' => 'cancel',
+        'STATUS_IN_WORK'  => 'in_work',
+        'STATUS_DONE'     => 'done',
+        'STATUS_FAILED'   => 'failed',
     ];
 
     public static $actions = [
@@ -38,13 +41,19 @@ class Task
     ];
 
 
-    public function __construct(int $authorID, string $description)
+    public function __construct(int $authorID, string $description, string $status = self::STATUS_NEW)
     {
         $this->authorID = $authorID;
         $this->description = $description;
+
+        if(!in_array($status, $this->getStatusesMap())){
+            throw new WrongStatusException();
+        } else {
+            $this->status = $status;
+        }
     }
 
-    public function getNextStatus(string $actionName)
+    public function getNextStatus(string $actionName) : string
     {
         switch ($actionName) {
             case self::START_TASK:
@@ -63,8 +72,11 @@ class Task
 
 
 
-    public function getAvailableActions(string $statusName)
+    public function getAvailableActions(string $statusName) : array
     {
+        if(!in_array($statusName, $this->getStatusesMap())){
+            throw new WrongStatusException();
+        }
 
         switch ($statusName) {
             case self::STATUS_NEW:
