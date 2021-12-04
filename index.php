@@ -1,17 +1,19 @@
 <?php
 
-use myorg\Exceptions\WrongStatusException;
-use myorg\Task\Task;
+use myorg\Csv\CsvLoader;
 
 require_once 'vendor/autoload.php';
 
-$newTask = new Task(1,'test');
-$newTask->currentUserId = 1;
-$newTask->taskPerformerId = 3;
+
+$loader = new CsvLoader('addresses.csv', ['Index', 'Eruption', 'Eruption2']);
 
 try {
-    var_dump($newTask->getAvailableActions($newTask::STATUS_NEW));
-} catch (WrongStatusException $exception) {
-    error_log($exception);
-    echo $exception->getMessage();
+
+    $loader->import();
+    $loader->writeToSql('test', 'table', '');
+
+} catch (Exception $exception) {
+    echo $exception;
 }
+
+
